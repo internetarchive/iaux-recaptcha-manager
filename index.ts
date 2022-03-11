@@ -1,1 +1,1 @@
-export { YourWebComponent } from './src/your-webcomponent';
+export { RecaptchaManager, RecaptchaManagerInterface } from './src/recaptcha-manager';

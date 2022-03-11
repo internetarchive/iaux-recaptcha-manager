@@ -14,7 +14,7 @@
     "sourceMap": true,
     "inlineSources": true,
     "rootDir": "./",
-    "declaration": true
+    "declaration": true,
   },
   "include": ["**/*.ts"]
 }
