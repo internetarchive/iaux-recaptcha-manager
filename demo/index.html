@@ -13,7 +13,12 @@
   </style>
 </head>
 <body>
-  <app-root></app-root>
+  <app-root>
+    <!-- recaptcha does not work in the shadowDOM so must be slotted from the top -->
+    <div slot="recaptcha">
+      <div id="recaptcha"></div>
+    </div>
+  </app-root>
 
   <script type="module" src="../dist/demo/app-root.js">
   </script>

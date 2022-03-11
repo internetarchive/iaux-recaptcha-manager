@@ -23,12 +23,12 @@
   "types": "dist/index.d.ts",
   "dependencies": {
     "@internetarchive/lazy-loader-service": "^0.2.0",
+    "@types/grecaptcha": "^3.0.3",
     "lit": "^2.0.2"
   },
   "devDependencies": {
     "@open-wc/eslint-config": "^7.0.0",
     "@open-wc/testing": "^3.0.3",
-    "@types/grecaptcha": "^3.0.3",
     "@typescript-eslint/eslint-plugin": "^5.3.1",
     "@typescript-eslint/parser": "^5.3.1",
     "@web/dev-server": "^0.1.28",
@@ -58,6 +58,9 @@
     "plugins": [
       "@typescript-eslint"
     ],
+    "globals": {
+      "ReCaptchaV2": "readonly"
+    },
     "rules": {
       "no-unused-vars": "off",
       "@typescript-eslint/no-unused-vars": [

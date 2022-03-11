@@ -1,4 +1,7 @@
-import { LazyLoaderService, LazyLoaderServiceInterface } from '@internetarchive/lazy-loader-service';
+import {
+  LazyLoaderService,
+  LazyLoaderServiceInterface,
+} from '@internetarchive/lazy-loader-service';
 
 export interface RecaptchaManagerInterface {
   execute(): Promise<string>;
@@ -6,7 +9,7 @@ export interface RecaptchaManagerInterface {
     container: HTMLElement,
     tabIndex: number,
     theme: ReCaptchaV2.Theme,
-    type: ReCaptchaV2.Type,
+    type: ReCaptchaV2.Type
   ): void;
 }
 
@@ -22,7 +25,10 @@ export class RecaptchaManager implements RecaptchaManagerInterface {
     siteKey: string;
   }): Promise<RecaptchaManagerInterface> {
     const grecaptchaLibrary = await RecaptchaManager.loadRecaptchaLibrary();
-    return new RecaptchaManager({ grecaptchaLibrary, siteKey: options.siteKey });
+    return new RecaptchaManager({
+      grecaptchaLibrary,
+      siteKey: options.siteKey,
+    });
   }
 
   /**
@@ -46,8 +52,7 @@ export class RecaptchaManager implements RecaptchaManagerInterface {
       };
 
       service.loadScript({
-        src:
-          'https://www.google.com/recaptcha/api.js?onload=grecaptchaLoadedCallback&render=explicit',
+        src: 'https://www.google.com/recaptcha/api.js?onload=grecaptchaLoadedCallback&render=explicit',
       });
     });
   }
@@ -56,7 +61,10 @@ export class RecaptchaManager implements RecaptchaManagerInterface {
 
   private siteKey: string;
 
-  constructor(options: { grecaptchaLibrary: ReCaptchaV2.ReCaptcha; siteKey: string }) {
+  constructor(options: {
+    grecaptchaLibrary: ReCaptchaV2.ReCaptcha;
+    siteKey: string;
+  }) {
     this.grecaptchaLibrary = options.grecaptchaLibrary;
     this.siteKey = options.siteKey;
   }
@@ -128,7 +136,7 @@ export class RecaptchaManager implements RecaptchaManagerInterface {
     container: HTMLElement,
     tabIndex: number,
     theme: ReCaptchaV2.Theme,
-    type: ReCaptchaV2.Type,
+    type: ReCaptchaV2.Type
   ): void {
     this.grecaptchaLibrary.render(container, {
       callback: this.responseHandler.bind(this),
@@ -136,8 +144,8 @@ export class RecaptchaManager implements RecaptchaManagerInterface {
       'error-callback': this.errorHandler.bind(this),
       sitekey: this.siteKey,
       tabindex: tabIndex,
-      theme: theme,
-      type: type,
+      theme,
+      type,
       size: 'invisible',
     });
   }
