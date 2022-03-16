@@ -25,11 +25,14 @@ export class AppRoot extends LitElement {
   }
 
   private async loadRecaptcha() {
-    this.recaptchaManager = await RecaptchaManager.getRecaptchaManager({
-      siteKey: '6LeTUvYUAAAAAPTvW98MaXyS8c6vxk4-9n8DI1ve',
+    this.recaptchaManager = await RecaptchaManager.getRecaptchaManager(
+      '6LeTUvYUAAAAAPTvW98MaXyS8c6vxk4-9n8DI1ve'
+    );
+    this.recaptchaManager?.setup({
+      tabIndex: 0,
+      theme: 'light',
+      type: 'image',
     });
-    const element = document.querySelector('#recaptcha') as HTMLDivElement;
-    this.recaptchaManager?.setup(element, 0, 'light', 'image');
   }
 
   private async executeRecaptcha() {

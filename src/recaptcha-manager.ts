@@ -4,13 +4,34 @@ import {
 } from '@internetarchive/lazy-loader-service';
 
 export interface RecaptchaManagerInterface {
+  /**
+   * Executes the recaptcha and returns a token
+   *
+   * Example:
+   *
+   * try {
+   *   const recaptchaResult = await recaptchaManager.execute();
+   *   console.log('recaptcha token:', recaptchaResult);
+   * } catch {
+   *   console.error('something happened')
+   * }
+   */
   execute(): Promise<string>;
-  setup(
-    container: HTMLElement,
-    tabIndex: number,
-    theme: ReCaptchaV2.Theme,
-    type: ReCaptchaV2.Type
-  ): void;
+
+  /**
+   * Create the recaptcha widget.
+   *
+   * If the `container` is not passed in, one will be created.
+   *
+   * @param options
+   */
+  setup(options?: {
+    container?: HTMLElement;
+    tabIndex?: number;
+    theme?: ReCaptchaV2.Theme;
+    type?: ReCaptchaV2.Type;
+    size?: ReCaptchaV2.Size;
+  }): void;
 }
 
 export class RecaptchaManager implements RecaptchaManagerInterface {
@@ -21,14 +42,33 @@ export class RecaptchaManager implements RecaptchaManagerInterface {
    * @param options
    * @returns
    */
-  static async getRecaptchaManager(options: {
-    siteKey: string;
-  }): Promise<RecaptchaManagerInterface> {
-    const grecaptchaLibrary = await RecaptchaManager.loadRecaptchaLibrary();
-    return new RecaptchaManager({
-      grecaptchaLibrary,
-      siteKey: options.siteKey,
+  static async getRecaptchaManager(
+    siteKey: string,
+    options?: {
+      lazyLoader?: LazyLoaderServiceInterface;
+      tabIndex?: number;
+      theme?: ReCaptchaV2.Theme;
+      type?: ReCaptchaV2.Type;
+      size?: ReCaptchaV2.Size;
+    }
+  ): Promise<RecaptchaManagerInterface> {
+    const grecaptchaLibrary = await RecaptchaManager.loadRecaptchaLibrary({
+      lazyLoader: options?.lazyLoader,
     });
+
+    const manager = new RecaptchaManager({
+      grecaptchaLibrary,
+      siteKey,
+    });
+
+    manager.setup({
+      tabIndex: options?.tabIndex,
+      theme: options?.theme,
+      type: options?.type,
+      size: options?.size,
+    });
+
+    return manager;
   }
 
   /**
@@ -77,35 +117,14 @@ export class RecaptchaManager implements RecaptchaManagerInterface {
 
   private isExecuting = false;
 
-  /**
-   * Execute Recaptcha and return a Promise containing the response token.
-   *
-   * This is an interesting flow.. we call `execute()` here, but have to wait for the
-   * response and expiration handlers that we bind during the inital `setup` call.
-   * For consumers, we want to be able to just call `execute()` and wait for a response.
-   * To allow this, we assign two callbacks:
-   * - `executionSuccessBlock`
-   * - `executionExpiredBlock`
-   *
-   * We then call those callbacks from inside `responseHandler` and `expiredHandler` to
-   * either resolve or reject the Promise.
-   *
-   * ie:
-   *
-   * try {
-   *   const recaptchaResult = await recaptchaManager.execute();
-   *   console.log('recaptcha token:', recaptchaResult);
-   * } catch {
-   *   console.error('something happened')
-   * }
-   *
-   * @returns {Promise<string>}
-   * @memberof RecaptchaManager
-   */
+  private containerElement: HTMLElement | null = null;
+
+  /** @inheritdoc */
   execute(): Promise<string> {
     if (this.isExecuting) {
-      this.finishExecution();
+      throw new Error('Recaptcha is already executing');
     }
+
     this.isExecuting = true;
     return new Promise((resolve, reject) => {
       this.executionSuccessBlock = (token: string): void => {
@@ -127,27 +146,55 @@ export class RecaptchaManager implements RecaptchaManagerInterface {
     });
   }
 
-  private finishExecution(): void {
-    this.isExecuting = false;
-    this.grecaptchaLibrary.reset();
-  }
+  /** @inheritdoc */
+  setup(options?: {
+    container?: HTMLElement;
+    tabIndex?: number;
+    theme?: ReCaptchaV2.Theme;
+    type?: ReCaptchaV2.Type;
+    size?: ReCaptchaV2.Size;
+  }): void {
+    const container = options?.container ?? this.createContainer();
 
-  setup(
-    container: HTMLElement,
-    tabIndex: number,
-    theme: ReCaptchaV2.Theme,
-    type: ReCaptchaV2.Type
-  ): void {
+    // we've already rendered this container, don't do it again
+    if (container === this.containerElement) return;
+
+    this.containerElement = container;
     this.grecaptchaLibrary.render(container, {
       callback: this.responseHandler.bind(this),
       'expired-callback': this.expiredHandler.bind(this),
       'error-callback': this.errorHandler.bind(this),
       sitekey: this.siteKey,
-      tabindex: tabIndex,
-      theme,
-      type,
-      size: 'invisible',
+      tabindex: options?.tabIndex,
+      theme: options?.theme,
+      type: options?.type,
+      size: options?.size ?? 'invisible',
     });
+  }
+
+  private createContainer(): HTMLElement {
+    const elementId = `recaptchaManager-${this.siteKey}`;
+    let element: HTMLElement | null = document.getElementById(elementId);
+    if (!element) {
+      element = document.createElement('div');
+      element.id = elementId;
+      element.style.position = 'fixed';
+      element.style.top = '50%';
+      element.style.left = '50%';
+      // #recaptcha - TopCollections {
+      //   position: fixed;
+      //   top: 50 %;
+      //   left: 50 %;
+      // }
+
+      document.body.insertBefore(element, document.body.firstChild);
+    }
+    return element;
+  }
+
+  private finishExecution(): void {
+    this.isExecuting = false;
+    this.grecaptchaLibrary.reset();
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
