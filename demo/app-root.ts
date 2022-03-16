@@ -1,5 +1,6 @@
 import { html, css, LitElement } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
+import { RecaptchaWidget } from '../src/recaptcha-widget';
 import {
   RecaptchaManager,
   RecaptchaManagerInterface,
@@ -9,43 +10,79 @@ import {
 export class AppRoot extends LitElement {
   @state() result?: string;
 
-  private recaptchaManager?: RecaptchaManagerInterface;
+  @state() result2?: string;
+
+  private recaptchaManager: RecaptchaManagerInterface = new RecaptchaManager({
+    defaultSiteKey: '6LeTUvYUAAAAAPTvW98MaXyS8c6vxk4-9n8DI1ve',
+  });
+
+  private recaptcha1?: RecaptchaWidget;
+
+  private recaptcha2?: RecaptchaWidget;
 
   render() {
     return html`
-      <button @click="${this.loadRecaptcha}">Load Recaptcha</button>
-      <button @click="${this.executeRecaptcha}">Execute Recaptcha</button>
-      <slot name="recaptcha"></slot>
+      <p>
+        <button @click="${this.loadRecaptcha}">Load Recaptcha</button
+        ><button @click="${this.executeRecaptcha}">Execute Recaptcha</button>
+      </p>
       ${this.result
-        ? html`<strong
-            >Token:<strong><p>${this.result}</p></strong></strong
-          >`
+        ? html`<p><strong>Token:</strong></p>
+            <p>${this.result}</p>`
+        : ''}
+      <p>
+        <button @click="${this.loadRecaptcha2}">Load Another Recaptcha</button
+        ><button @click="${this.executeRecaptcha2}">
+          Execute Another Recaptcha
+        </button>
+      </p>
+      ${this.result2
+        ? html`<p><strong>Token 2:</strong></p>
+            <p>${this.result2}</p>`
         : ''}
     `;
   }
 
   private async loadRecaptcha() {
-    this.recaptchaManager = await RecaptchaManager.getRecaptchaManager(
-      '6LeTUvYUAAAAAPTvW98MaXyS8c6vxk4-9n8DI1ve'
-    );
-    this.recaptchaManager?.setup({
-      tabIndex: 0,
-      theme: 'light',
-      type: 'image',
+    this.recaptcha1 = await this.recaptchaManager?.getRecaptchaWidget({
+      recaptchaParams: {
+        tabindex: 0,
+        theme: 'light',
+        type: 'image',
+      },
     });
   }
 
   private async executeRecaptcha() {
-    if (!this.recaptchaManager) {
+    if (!this.recaptcha1) {
       await this.loadRecaptcha();
     }
 
-    if (!this.recaptchaManager) {
+    if (!this.recaptcha1) {
       console.error('error loading recaptcha');
       return;
     }
 
-    this.result = await this.recaptchaManager.execute();
+    this.result = await this.recaptcha1.execute();
+  }
+
+  private async loadRecaptcha2() {
+    this.recaptcha2 = await this.recaptchaManager?.getRecaptchaWidget({
+      siteKey: '6LfDgOgeAAAAAEIzkbGeW4N_yQoN3PxhUYdkxbS6',
+    });
+  }
+
+  private async executeRecaptcha2() {
+    if (!this.recaptcha2) {
+      await this.loadRecaptcha();
+    }
+
+    if (!this.recaptcha2) {
+      console.error('error loading recaptcha');
+      return;
+    }
+
+    this.result2 = await this.recaptcha2.execute();
   }
 
   static styles = css`
