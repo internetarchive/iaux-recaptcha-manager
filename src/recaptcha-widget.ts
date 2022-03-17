@@ -7,6 +7,17 @@ export interface RecaptchaWidgetInterface {
 }
 
 /**
+ * The combines parameters from the Recaptcha config and adds the zIndex, which
+ * allows us to control the z-index of the recaptcha widget.
+ */
+export type RecaptchaWidgetConfig = Pick<
+  ReCaptchaV2.Parameters,
+  'tabindex' | 'theme' | 'type' | 'size' | 'badge'
+> & {
+  zIndex?: number;
+};
+
+/**
  * This encompasses a widget for a given site key.
  */
 export class RecaptchaWidget implements RecaptchaWidgetInterface {
@@ -29,13 +40,13 @@ export class RecaptchaWidget implements RecaptchaWidgetInterface {
       siteKey: string;
       grecaptchaLibrary: ReCaptchaV2.ReCaptcha;
     },
-    recaptchaParams?: ReCaptchaV2.Parameters
+    widgetConfig?: RecaptchaWidgetConfig
   ) {
     this.siteKey = config.siteKey;
     this.grecaptchaLibrary = config.grecaptchaLibrary;
 
     const container = this.createContainer();
-    this.setup(container, recaptchaParams);
+    this.setup(container, widgetConfig);
   }
 
   /** @inheritdoc */
@@ -80,24 +91,24 @@ export class RecaptchaWidget implements RecaptchaWidgetInterface {
     this.grecaptchaLibrary.reset(widgetId);
   }
 
-  /** @inheritdoc */
   private setup(
     container: HTMLElement,
-    recaptchaParams?: ReCaptchaV2.Parameters
+    widgetConfig?: ReCaptchaV2.Parameters
   ): void {
     this.widgetId = this.grecaptchaLibrary.render(container, {
       callback: this.responseHandler.bind(this),
       'expired-callback': this.expiredHandler.bind(this),
       'error-callback': this.errorHandler.bind(this),
       sitekey: this.siteKey,
-      tabindex: recaptchaParams?.tabindex,
-      theme: recaptchaParams?.theme,
-      type: recaptchaParams?.type,
-      size: recaptchaParams?.size ?? 'invisible',
+      tabindex: widgetConfig?.tabindex,
+      theme: widgetConfig?.theme,
+      type: widgetConfig?.type,
+      size: widgetConfig?.size ?? 'invisible',
+      badge: widgetConfig?.badge,
     });
   }
 
-  private createContainer(): HTMLElement {
+  private createContainer(zIndex?: number): HTMLElement {
     const elementId = `recaptchaManager-${this.siteKey}`;
     let element: HTMLElement | null = document.getElementById(elementId);
     if (!element) {
@@ -106,6 +117,7 @@ export class RecaptchaWidget implements RecaptchaWidgetInterface {
       element.style.position = 'fixed';
       element.style.top = '50%';
       element.style.left = '50%';
+      element.style.zIndex = zIndex ? `${zIndex}` : '10';
       document.body.appendChild(element);
     }
     return element;
