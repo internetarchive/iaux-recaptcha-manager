@@ -21,14 +21,14 @@ export class RecaptchaManager implements RecaptchaManagerInterface {
 
   private recaptchaCache: Record<string, RecaptchaWidget> = {};
 
-  constructor(options: {
-    defaultSiteKey: string;
+  constructor(options?: {
+    defaultSiteKey?: string;
     lazyLoader?: LazyLoaderServiceInterface;
     grecaptchaLibrary?: ReCaptchaV2.ReCaptcha; // allows dependency injection or will be lazy loaded
   }) {
-    this.defaultSiteKey = options.defaultSiteKey;
-    this.lazyLoader = options.lazyLoader ?? new LazyLoaderService();
-    this.grecaptchaLibraryCache = options.grecaptchaLibrary;
+    this.defaultSiteKey = options?.defaultSiteKey;
+    this.lazyLoader = options?.lazyLoader ?? new LazyLoaderService();
+    this.grecaptchaLibraryCache = options?.grecaptchaLibrary;
   }
 
   /** @inheritdoc */
