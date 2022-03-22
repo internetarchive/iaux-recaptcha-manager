@@ -5,8 +5,11 @@ import {
   LazyLoaderServiceInterface,
 } from '@internetarchive/lazy-loader-service';
 import { Unsubscribe } from 'nanoevents';
+import { MockGrecaptcha } from './mock-grecaptcha';
 
 export class MockLazyLoaderService implements LazyLoaderServiceInterface {
+  loadScriptSrc?: string;
+
   on<E extends keyof LazyLoaderServiceEvents>(
     event: E,
     callback: LazyLoaderServiceEvents[E]
@@ -26,6 +29,10 @@ export class MockLazyLoaderService implements LazyLoaderServiceInterface {
     bundleType?: BundleType;
     attributes?: Record<string, string>;
   }): Promise<void> {
-    console.debug('loadScript', options);
+    this.loadScriptSrc = options.src;
+    window.grecaptcha = new MockGrecaptcha({
+      mode: 'success',
+    });
+    (window as any).grecaptchaLoadedCallback();
   }
 }

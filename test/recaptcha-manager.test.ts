@@ -55,6 +55,18 @@ describe('ReCaptcha Management', () => {
       const recaptcha2 = await recaptchaManager.getRecaptchaWidget();
       expect(recaptcha1).to.equal(recaptcha2);
     });
+
+    it('loads the recaptcha library if needed', async () => {
+      const recaptchaManager = new RecaptchaManager({
+        lazyLoader: mockLazyLoader,
+        defaultSiteKey: '123',
+      });
+      await recaptchaManager.getRecaptchaWidget();
+      const loadUrl = mockLazyLoader.loadScriptSrc;
+      expect(
+        loadUrl?.includes('recaptcha/api.js?onload=grecaptchaLoadedCallback')
+      ).to.be.true;
+    });
   });
 
   describe('ReCaptcha Widget', () => {
