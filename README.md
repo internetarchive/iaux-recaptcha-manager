@@ -2,7 +2,36 @@
 
 # Internet Archive reCaptcha Manager
 
-A library to lazy load and more easily interact with reCaptcha
+A library to lazy load and interact with reCaptcha
+
+## Installation
+
+```shell
+> yarn add @internetarchive/recaptcha-manager
+```
+
+## Usage
+
+```ts
+const recaptchaManager = new RecaptchaManager({
+  defaultSiteKey: 'your-site-key',
+});
+
+// will load recaptcha library if it's not loaded
+const recaptchaWidget = await recaptchaManager.getRecaptchaWidget({
+  recaptchaParams: {
+    tabindex: 0,
+    theme: 'light',
+    type: 'image',
+  },
+});
+
+const token = await recaptchaWidget.execute();
+
+// submit token with your post and validate on the backend
+```
+
+For more usage examples, see `demo/app-root.ts` and `test/recaptcha-manager.test.ts`.
 
 ## Local Demo with `web-dev-server`
 ```bash

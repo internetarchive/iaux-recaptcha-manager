@@ -1,6 +1,6 @@
 {
   "name": "@internetarchive/recaptcha-manager",
-  "description": "A library that lets you lazy load and interact with reCaptcha more easily.",
+  "description": "A library that lets you lazy load and interact with reCaptcha.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/internetarchive/iaux-recaptcha-manager.git"

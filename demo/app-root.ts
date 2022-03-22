@@ -13,7 +13,7 @@ export class AppRoot extends LitElement {
   @state() result2?: string;
 
   private recaptchaManager: RecaptchaManagerInterface = new RecaptchaManager({
-    defaultSiteKey: '6LeTUvYUAAAAAPTvW98MaXyS8c6vxk4-9n8DI1ve',
+    defaultSiteKey: '<your-site-key>',
   });
 
   private recaptcha1?: RecaptchaWidget;
@@ -68,7 +68,7 @@ export class AppRoot extends LitElement {
 
   private async loadRecaptcha2() {
     this.recaptcha2 = await this.recaptchaManager?.getRecaptchaWidget({
-      siteKey: '6LfDgOgeAAAAAEIzkbGeW4N_yQoN3PxhUYdkxbS6',
+      siteKey: '<your-site-key>',
     });
   }
 
