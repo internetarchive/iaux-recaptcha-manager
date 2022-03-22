@@ -64,6 +64,8 @@ export class RecaptchaWidget implements RecaptchaWidgetInterface {
       this.finishExecution();
     }
 
+    this.isExecuting = true;
+
     return new Promise((resolve, reject) => {
       this.executionSuccessBlock = (token: string): void => {
         this.finishExecution();
