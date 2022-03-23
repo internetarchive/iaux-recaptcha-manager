@@ -2,7 +2,7 @@ import {
   LazyLoaderService,
   LazyLoaderServiceInterface,
 } from '@internetarchive/lazy-loader-service';
-import { RecaptchaWidget } from './recaptcha-widget';
+import { RecaptchaWidget, RecaptchaWidgetInterface } from './recaptcha-widget';
 
 export interface RecaptchaManagerInterface {
   /**
@@ -11,7 +11,7 @@ export interface RecaptchaManagerInterface {
   getRecaptchaWidget(options?: {
     siteKey?: string;
     recaptchaParams?: ReCaptchaV2.Parameters;
-  }): Promise<RecaptchaWidget>;
+  }): Promise<RecaptchaWidgetInterface>;
 }
 
 export class RecaptchaManager implements RecaptchaManagerInterface {
@@ -35,7 +35,7 @@ export class RecaptchaManager implements RecaptchaManagerInterface {
   async getRecaptchaWidget(options?: {
     siteKey?: string;
     recaptchaParams?: ReCaptchaV2.Parameters;
-  }): Promise<RecaptchaWidget> {
+  }): Promise<RecaptchaWidgetInterface> {
     const key = options?.siteKey ?? this.defaultSiteKey;
     if (!key) {
       throw new Error('The reCaptcha widget requires a site key');

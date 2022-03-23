@@ -1,6 +1,6 @@
 import { html, css, LitElement } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import { RecaptchaWidget } from '../src/recaptcha-widget';
+import { RecaptchaWidgetInterface } from '../src/recaptcha-widget';
 import {
   RecaptchaManager,
   RecaptchaManagerInterface,
@@ -16,9 +16,9 @@ export class AppRoot extends LitElement {
     defaultSiteKey: '<your-site-key>',
   });
 
-  private recaptcha1?: RecaptchaWidget;
+  private recaptcha1?: RecaptchaWidgetInterface;
 
-  private recaptcha2?: RecaptchaWidget;
+  private recaptcha2?: RecaptchaWidgetInterface;
 
   render() {
     return html`
