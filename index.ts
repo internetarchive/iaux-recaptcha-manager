@@ -6,4 +6,5 @@ export {
 export {
   RecaptchaWidget,
   RecaptchaWidgetInterface,
+  RecaptchaWidgetConfig,
 } from './src/recaptcha-widget';

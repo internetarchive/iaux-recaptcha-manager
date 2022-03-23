@@ -38,7 +38,7 @@ export class RecaptchaManager implements RecaptchaManagerInterface {
   }): Promise<RecaptchaWidget> {
     const key = options?.siteKey ?? this.defaultSiteKey;
     if (!key) {
-      throw new Error('RecaptchaManager requires a site key');
+      throw new Error('Recaptcha widget requires a site key');
     }
 
     const cached = this.recaptchaCache[key];
