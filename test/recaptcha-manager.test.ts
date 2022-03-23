@@ -36,7 +36,7 @@ describe('ReCaptcha Management', () => {
         expect.fail('should not get here');
       } catch (e) {
         expect((e as Error).message).to.equal(
-          'RecaptchaManager requires a site key'
+          'The reCaptcha widget requires a site key'
         );
       }
     });
