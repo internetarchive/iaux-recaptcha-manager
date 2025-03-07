@@ -50,7 +50,7 @@ export class RecaptchaManager implements RecaptchaManagerInterface {
         siteKey: key,
         grecaptchaLibrary,
       },
-      options?.recaptchaParams
+      options?.recaptchaParams,
     );
 
     this.recaptchaCache[key] = recaptcha;
@@ -67,9 +67,11 @@ export class RecaptchaManager implements RecaptchaManagerInterface {
       return this.grecaptchaLibraryCache;
     }
     return new Promise(resolve => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (window as any).grecaptchaLoadedCallback = (): void => {
         setTimeout(() => {
           // remove the callback when we're done with it
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           delete (window as any).grecaptchaLoadedCallback;
         }, 10);
         this.grecaptchaLibraryCache = window.grecaptcha;
