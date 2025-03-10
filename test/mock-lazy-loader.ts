@@ -12,7 +12,7 @@ export class MockLazyLoaderService implements LazyLoaderServiceInterface {
 
   on<E extends keyof LazyLoaderServiceEvents>(
     event: E,
-    callback: LazyLoaderServiceEvents[E]
+    callback: LazyLoaderServiceEvents[E],
   ): Unsubscribe {
     throw new Error('Method not implemented.');
   }
@@ -33,6 +33,7 @@ export class MockLazyLoaderService implements LazyLoaderServiceInterface {
     window.grecaptcha = new MockGrecaptcha({
       mode: 'success',
     });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (window as any).grecaptchaLoadedCallback();
   }
 }

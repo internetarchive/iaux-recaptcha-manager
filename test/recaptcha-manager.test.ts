@@ -36,7 +36,7 @@ describe('ReCaptcha Management', () => {
         expect.fail('should not get here');
       } catch (e) {
         expect((e as Error).message).to.equal(
-          'The reCaptcha widget requires a site key'
+          'The reCaptcha widget requires a site key',
         );
       }
     });
@@ -64,7 +64,7 @@ describe('ReCaptcha Management', () => {
       await recaptchaManager.getRecaptchaWidget();
       const loadUrl = mockLazyLoader.loadScriptSrc;
       expect(
-        loadUrl?.includes('recaptcha/api.js?onload=grecaptchaLoadedCallback')
+        loadUrl?.includes('recaptcha/api.js?onload=grecaptchaLoadedCallback'),
       ).to.be.true;
     });
   });

@@ -40,7 +40,7 @@ export class RecaptchaWidget implements RecaptchaWidgetInterface {
       siteKey: string;
       grecaptchaLibrary: ReCaptchaV2.ReCaptcha;
     },
-    widgetConfig?: RecaptchaWidgetConfig
+    widgetConfig?: RecaptchaWidgetConfig,
   ) {
     this.siteKey = config.siteKey;
     this.grecaptchaLibrary = config.grecaptchaLibrary;
@@ -95,7 +95,7 @@ export class RecaptchaWidget implements RecaptchaWidgetInterface {
 
   private setup(
     container: HTMLElement,
-    widgetConfig?: ReCaptchaV2.Parameters
+    widgetConfig?: ReCaptchaV2.Parameters,
   ): void {
     this.widgetId = this.grecaptchaLibrary.render(container, {
       callback: this.responseHandler.bind(this),
@@ -125,7 +125,7 @@ export class RecaptchaWidget implements RecaptchaWidgetInterface {
     return element;
   }
 
-  private responseHandler(response: any): void {
+  private responseHandler(response: string): void {
     if (this.executionSuccessBlock) {
       this.executionSuccessBlock(response);
       this.executionSuccessBlock = undefined;

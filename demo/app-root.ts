@@ -13,7 +13,7 @@ export class AppRoot extends LitElement {
   @state() result2?: string;
 
   private recaptchaManager: RecaptchaManagerInterface = new RecaptchaManager({
-    defaultSiteKey: '<your-site-key>',
+    defaultSiteKey: '6Ld64a8UAAAAAGbDwi1927ztGNw7YABQ-dqzvTN2',
   });
 
   private recaptcha1?: RecaptchaWidgetInterface;

@@ -1,5 +1,3 @@
-/* eslint-disable camelcase */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 export type MockGrecaptchaMode = 'success' | 'expired' | 'error';
@@ -28,7 +26,7 @@ export class MockGrecaptcha implements ReCaptchaV2.ReCaptcha {
   render(
     container: string | HTMLElement,
     parameters?: ReCaptchaV2.Parameters | undefined,
-    inherit?: boolean | undefined
+    inherit?: boolean | undefined,
   ): number {
     this.callback = parameters?.callback?.bind(this);
     this['error-callback'] = parameters?.['error-callback']?.bind(this);
