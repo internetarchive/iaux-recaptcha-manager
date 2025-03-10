@@ -35,7 +35,7 @@ For more usage examples, see `demo/app-root.ts` and `test/recaptcha-manager.test
 
 ## Local Demo with `web-dev-server`
 ```bash
-npm start
+npm run start
 ```
 To run a local development server that serves the basic demo located in `demo/index.html`
 
