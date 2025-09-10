@@ -1,7 +1,6 @@
 import { expect } from '@open-wc/testing';
 import { MockGrecaptcha } from './mock-grecaptcha';
 import { RecaptchaManager } from '../src/recaptcha-manager';
-import { TimeoutError } from '../src/util/timed-promise';
 import { MockLazyLoaderService } from './mock-lazy-loader';
 
 const mockLazyLoader = new MockLazyLoaderService();
@@ -70,6 +69,7 @@ describe('ReCaptcha Management', () => {
       const recaptchaManager = new RecaptchaManager({
         lazyLoader: mockLazyLoaderWithCallback,
         defaultSiteKey: '123',
+        timeout: 100,
       });
 
       await recaptchaManager.getRecaptchaWidget();
@@ -83,14 +83,17 @@ describe('ReCaptcha Management', () => {
       const recaptchaManager = new RecaptchaManager({
         lazyLoader: mockLazyLoader,
         defaultSiteKey: '123',
+        timeout: 100,
       });
 
       try {
         await recaptchaManager.getRecaptchaWidget();
         expect.fail('recaptcha load did not time out as expected');
       } catch (err) {
-        expect(err).to.be.instanceOf(TimeoutError);
-        expect((err as TimeoutError).message).to.equal('Operation timed out');
+        expect(err).to.be.instanceOf(Error);
+        expect((err as Error).message).to.equal(
+          'grecaptcha failed to execute callback',
+        );
       }
     });
   });
