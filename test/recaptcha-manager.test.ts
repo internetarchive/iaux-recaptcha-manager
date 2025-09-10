@@ -1,6 +1,7 @@
 import { expect } from '@open-wc/testing';
 import { MockGrecaptcha } from './mock-grecaptcha';
 import { RecaptchaManager } from '../src/recaptcha-manager';
+import { TimeoutError } from '../src/util/timed-promise';
 import { MockLazyLoaderService } from './mock-lazy-loader';
 
 const mockLazyLoader = new MockLazyLoaderService();
@@ -57,15 +58,40 @@ describe('ReCaptcha Management', () => {
     });
 
     it('loads the recaptcha library if needed', async () => {
+      // Mock lazy loader that mimics the grecaptcha script calling the callback on load
+      const mockLazyLoaderWithCallback = new MockLazyLoaderService(() => {
+        window.grecaptcha = new MockGrecaptcha({
+          mode: 'success',
+        });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (window as any).grecaptchaLoadedCallback();
+      });
+
+      const recaptchaManager = new RecaptchaManager({
+        lazyLoader: mockLazyLoaderWithCallback,
+        defaultSiteKey: '123',
+      });
+
+      await recaptchaManager.getRecaptchaWidget();
+      const loadUrl = mockLazyLoaderWithCallback.loadScriptSrc;
+      expect(
+        loadUrl?.includes('recaptcha/api.js?onload=grecaptchaLoadedCallback'),
+      ).to.be.true;
+    });
+
+    it('rejects after specified timeout if grecaptcha fails to execute callback', async () => {
       const recaptchaManager = new RecaptchaManager({
         lazyLoader: mockLazyLoader,
         defaultSiteKey: '123',
       });
-      await recaptchaManager.getRecaptchaWidget();
-      const loadUrl = mockLazyLoader.loadScriptSrc;
-      expect(
-        loadUrl?.includes('recaptcha/api.js?onload=grecaptchaLoadedCallback'),
-      ).to.be.true;
+
+      try {
+        await recaptchaManager.getRecaptchaWidget();
+        expect.fail('recaptcha load did not time out as expected');
+      } catch (err) {
+        expect(err).to.be.instanceOf(TimeoutError);
+        expect((err as TimeoutError).message).to.equal('Operation timed out');
+      }
     });
   });
 
