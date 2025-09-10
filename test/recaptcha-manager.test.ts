@@ -57,15 +57,63 @@ describe('ReCaptcha Management', () => {
     });
 
     it('loads the recaptcha library if needed', async () => {
+      // Mock lazy loader that mimics the grecaptcha script calling the callback on load
+      const mockLazyLoaderWithCallback = new MockLazyLoaderService(() => {
+        window.grecaptcha = new MockGrecaptcha({
+          mode: 'success',
+        });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (window as any).grecaptchaLoadedCallback();
+      });
+
+      const recaptchaManager = new RecaptchaManager({
+        lazyLoader: mockLazyLoaderWithCallback,
+        defaultSiteKey: '123',
+        timeout: 100,
+      });
+
+      await recaptchaManager.getRecaptchaWidget();
+      const loadUrl = mockLazyLoaderWithCallback.loadScriptSrc;
+      expect(
+        loadUrl?.includes('recaptcha/api.js?onload=grecaptchaLoadedCallback'),
+      ).to.be.true;
+    });
+
+    it('rejects after specified timeout if grecaptcha fails to execute callback', async () => {
+      const recaptchaManager = new RecaptchaManager({
+        lazyLoader: mockLazyLoader,
+        defaultSiteKey: '123',
+        timeout: 100,
+      });
+
+      try {
+        await recaptchaManager.getRecaptchaWidget();
+        expect.fail('recaptcha load did not time out as expected');
+      } catch (err) {
+        expect(err).to.be.instanceOf(Error);
+        expect((err as Error).message).to.equal(
+          'grecaptcha failed to execute callback',
+        );
+      }
+    });
+
+    it('can set the timeout delay', async () => {
       const recaptchaManager = new RecaptchaManager({
         lazyLoader: mockLazyLoader,
         defaultSiteKey: '123',
       });
-      await recaptchaManager.getRecaptchaWidget();
-      const loadUrl = mockLazyLoader.loadScriptSrc;
-      expect(
-        loadUrl?.includes('recaptcha/api.js?onload=grecaptchaLoadedCallback'),
-      ).to.be.true;
+
+      recaptchaManager.setTimeoutDelay(1);
+
+      try {
+        await recaptchaManager.getRecaptchaWidget();
+        expect.fail('recaptcha load did not time out as expected');
+      } catch (err) {
+        expect(err).to.be.instanceOf(Error);
+        expect((err as Error).message).to.equal(
+          'grecaptcha failed to execute callback',
+        );
+      }
     });
   });
 
