@@ -1,5 +1,5 @@
 import { html, css, LitElement } from 'lit';
-import { customElement, state } from 'lit/decorators.js';
+import { customElement, state, query } from 'lit/decorators.js';
 import { RecaptchaWidgetInterface } from '../src/recaptcha-widget';
 import {
   RecaptchaManager,
@@ -12,6 +12,8 @@ export class AppRoot extends LitElement {
 
   @state() result2?: string;
 
+  @query('#timeout') timeoutInput!: HTMLInputElement;
+
   private recaptchaManager: RecaptchaManagerInterface = new RecaptchaManager({
     defaultSiteKey: '6Ld64a8UAAAAAGbDwi1927ztGNw7YABQ-dqzvTN2',
   });
@@ -22,6 +24,18 @@ export class AppRoot extends LitElement {
 
   render() {
     return html`
+      <label for="timeout">
+        Timeout (ms):
+        <input
+          type="number"
+          id="timeout"
+          value="10000"
+          min="0"
+          max="99999"
+          step="100"
+          @change=${this.updateTimeout}
+        />
+      </label>
       <p>
         <button @click="${this.loadRecaptcha}">Load Recaptcha</button
         ><button @click="${this.executeRecaptcha}">Execute Recaptcha</button>
@@ -41,6 +55,10 @@ export class AppRoot extends LitElement {
             <p>${this.result2}</p>`
         : ''}
     `;
+  }
+
+  private updateTimeout() {
+    this.recaptchaManager.setTimeoutDelay(+this.timeoutInput.value);
   }
 
   private async loadRecaptcha() {

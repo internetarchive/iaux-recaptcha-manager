@@ -6,6 +6,11 @@ import { RecaptchaWidget, RecaptchaWidgetInterface } from './recaptcha-widget';
 
 export interface RecaptchaManagerInterface {
   /**
+   * Changes the manager's timeout delay to the given number of milliseconds.
+   */
+  setTimeoutDelay(delay: number): void;
+
+  /**
    * Load a recaptcha widget for a given site key or the default site key.
    */
   getRecaptchaWidget(options?: {
@@ -38,6 +43,11 @@ export class RecaptchaManager implements RecaptchaManagerInterface {
     this.lazyLoader = options?.lazyLoader ?? new LazyLoaderService();
     this.grecaptchaLibraryCache = options?.grecaptchaLibrary;
     this.timeout = options?.timeout ?? RecaptchaManager.DEFAULT_TIMEOUT;
+  }
+
+  /** @inheritdoc */
+  setTimeoutDelay(delay: number): void {
+    this.timeout = delay;
   }
 
   /** @inheritdoc */

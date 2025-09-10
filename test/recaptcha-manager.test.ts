@@ -96,6 +96,25 @@ describe('ReCaptcha Management', () => {
         );
       }
     });
+
+    it('can set the timeout delay', async () => {
+      const recaptchaManager = new RecaptchaManager({
+        lazyLoader: mockLazyLoader,
+        defaultSiteKey: '123',
+      });
+
+      recaptchaManager.setTimeoutDelay(1);
+
+      try {
+        await recaptchaManager.getRecaptchaWidget();
+        expect.fail('recaptcha load did not time out as expected');
+      } catch (err) {
+        expect(err).to.be.instanceOf(Error);
+        expect((err as Error).message).to.equal(
+          'grecaptcha failed to execute callback',
+        );
+      }
+    });
   });
 
   describe('ReCaptcha Widget', () => {
