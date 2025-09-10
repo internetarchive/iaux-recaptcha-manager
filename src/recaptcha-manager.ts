@@ -31,7 +31,7 @@ export class RecaptchaManager implements RecaptchaManagerInterface {
   /**
    * How long in milliseconds to wait for the recaptcha library to load before timing out.
    */
-  private timeout: number;
+  private timeout = RecaptchaManager.DEFAULT_TIMEOUT;
 
   constructor(options?: {
     defaultSiteKey?: string;
