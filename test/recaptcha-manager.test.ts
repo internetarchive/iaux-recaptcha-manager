@@ -75,7 +75,9 @@ describe('ReCaptcha Management', () => {
       await recaptchaManager.getRecaptchaWidget();
       const loadUrl = mockLazyLoaderWithCallback.loadScriptSrc;
       expect(
-        loadUrl?.includes('recaptcha/api.js?onload=grecaptchaLoadedCallback'),
+        loadUrl?.includes(
+          'https://www.recaptcha.net/recaptcha/api.js?onload=grecaptchaLoadedCallback',
+        ),
       ).to.be.true;
     });
 

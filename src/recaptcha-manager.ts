@@ -77,7 +77,8 @@ export class RecaptchaManager implements RecaptchaManagerInterface {
   }
 
   /**
-   * Load the Recaptcha library from Google.
+   * Load the Recaptcha library from Google's www.recaptcha.net mirror, which
+   * is reachable in regions where www.google.com is blocked.
    *
    * @returns Promise<ReCaptchaV2.ReCaptcha>
    */
@@ -103,7 +104,7 @@ export class RecaptchaManager implements RecaptchaManagerInterface {
       );
 
       this.lazyLoader.loadScript({
-        src: 'https://www.google.com/recaptcha/api.js?onload=grecaptchaLoadedCallback&render=explicit',
+        src: 'https://www.recaptcha.net/recaptcha/api.js?onload=grecaptchaLoadedCallback&render=explicit',
       });
     });
   }
