@@ -2,6 +2,8 @@
 
 # Internet Archive reCaptcha Manager
 
+> Moved to [@internetarchive/elements](https://github.com/internetarchive/elements) (`src/services/recaptcha-manager`). New work goes there.
+
 A library to lazy load and interact with reCaptcha
 
 ## Installation
